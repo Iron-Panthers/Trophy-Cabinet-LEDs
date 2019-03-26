@@ -188,6 +188,7 @@ with open('trophy_cabinet/schedule.h', 'w') as f:
 
 	f.write('\n')
 	f.write(array)
+	f.write('\n')
 
 print(f"Successfully wrote {count} entries to trophy_cabinet/schedule.h")
 print(f"LED is on for {total_duration} seconds ({total_duration / 3600} hours) every cycle")
