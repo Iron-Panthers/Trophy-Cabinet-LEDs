@@ -77,15 +77,15 @@ void setup() {
 }
 
 void loop() {
-  LEDDuration* nextTime = &schedule[scheduleIndex];
+  LEDDuration* scheduleEntry = &schedule[scheduleIndex];
   unsigned long currentTime = rtc.now().unixtime();
-  unsigned long waitDuration = 1000 * (nextTime->start - currentTime);
+  unsigned long waitDuration = 1000 * (scheduleEntry->start - currentTime);
   
   Serial.print("Current time: ");
   Serial.println(currentTime);
   
   Serial.print("Next time: ");
-  Serial.println(nextTime->start);
+  Serial.println(scheduleEntry->start);
 
   Serial.print("Delay for: ");
   Serial.print(waitDuration);
@@ -100,31 +100,25 @@ void loop() {
     digitalWrite(13, LOW);
   }
 
-  unsigned long endTime = nextTime->start + nextTime->duration;
+  unsigned long endTime = scheduleEntry->start + scheduleEntry->duration;
   Serial.print("The wait is over. LEDs on until: ");
   Serial.println(endTime);
 
   digitalWrite(13, HIGH);
-  
+
+  scheduleEntry->pattern->begin(leds);
   while (rtc.now().unixtime() < endTime) {
-    static uint8_t hue = 0;
-    
-    for (int i = NUM_LEDS - 1; i > 0; i--) {
-      leds[i] = leds[i - 1];
-    }
-    leds[0] = CHSV(hue, 255, 255);
-    hue += 5;
-    FastLED.show();
-    delay(20);
+    scheduleEntry->pattern->loop(leds);
   }
+  scheduleEntry->pattern->end(leds);
 
   FastLED.clear();
   FastLED.show();
 
   digitalWrite(13, LOW);
 
-  nextTime->start += PERIOD;
+  scheduleEntry->start += PERIOD;
   Serial.print("LED cycle finished. Next time for this entry is ");
-  Serial.println(nextTime->start);
+  Serial.println(scheduleEntry->start);
   scheduleIndex = (scheduleIndex + 1) % SCHEDULE_COUNT;
 }
