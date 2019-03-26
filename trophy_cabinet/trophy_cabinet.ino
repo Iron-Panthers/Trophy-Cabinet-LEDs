@@ -88,18 +88,21 @@ void loop() {
   Serial.print("Next time: ");
   Serial.println(nextTime->start);
 
-  if (nextTime > currentTime) {
-    Serial.print("Delay for: ");
-    Serial.print(waitDuration);
-    Serial.println("ms");
-    
-    delay(waitDuration);
-  } else {
-    Serial.println("No need to delay.");
+  Serial.print("Delay for: ");
+  Serial.print(waitDuration);
+  Serial.println("ms");
+
+  // Heartbeat blink every 5 seconds.
+  unsigned long beginTime = millis();  // A measure taken to prevent overflow. 
+  while (millis() - beginTime <= waitDuration) {  // The subtraction underflow will cancel it out.
+    delay(4990);
+    digitalWrite(13, HIGH);
+    delay(10);
+    digitalWrite(13, LOW);
   }
 
   unsigned long endTime = nextTime->start + nextTime->duration;
-  Serial.print("The wait is over. Blinky until: ");
+  Serial.print("The wait is over. LEDs on until: ");
   Serial.println(endTime);
 
   digitalWrite(13, HIGH);
@@ -122,7 +125,7 @@ void loop() {
   digitalWrite(13, LOW);
 
   nextTime->start += PERIOD;
-  Serial.print("Blinky finished. Next time for this entry is ");
+  Serial.print("LED cycle finished. Next time for this entry is ");
   Serial.println(nextTime->start);
   scheduleIndex = (scheduleIndex + 1) % SCHEDULE_COUNT;
 }
