@@ -1,13 +1,12 @@
 #include <RTClib.h>
 #include <FastLED.h>
 
-#include "LEDDuration.h"
+#include "constants.h"
 #include "schedule.h"
+#include "LEDDuration.h"
+#include "LEDPattern.h"
 
 
-#define NUM_LEDS 132
-#define LOWER_COUNT 69
-#define UPPER_COUNT (NUM_LEDS - LOWER_COUNT)
 #define DATA_PIN 8
 
 

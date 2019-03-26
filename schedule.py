@@ -19,6 +19,7 @@ pdt = tz.tzoffset('PDT', -25200)
 now = datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=7, minute=00)
 period = timedelta(weeks=1)
 
+
 monday = [
 	# Before 1
 	Duration(
