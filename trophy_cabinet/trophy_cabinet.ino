@@ -91,12 +91,12 @@ void loop() {
   Serial.print(waitDuration);
   Serial.println("ms");
 
-  // Heartbeat blink every 5 seconds.
+  // Heartbeat blink every 10 seconds.
   unsigned long beginTime = millis();  // A measure taken to prevent overflow. 
   while (millis() - beginTime <= waitDuration) {  // The subtraction underflow will cancel it out.
-    delay(4990);
+    delay(9999);
     digitalWrite(13, HIGH);
-    delay(10);
+    delay(1);
     digitalWrite(13, LOW);
   }
 
