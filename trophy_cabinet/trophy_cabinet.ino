@@ -1,19 +1,15 @@
 #include <RTClib.h>
 #include <FastLED.h>
 
+#include "LEDDuration.h"
+#include "schedule.h"
+
+
 #define NUM_LEDS 132
 #define LOWER_COUNT 69
 #define UPPER_COUNT (NUM_LEDS - LOWER_COUNT)
 #define DATA_PIN 8
 
-struct LEDDuration {
-  unsigned long start;  // First time, in seconds
-  unsigned long duration;  // Duration of the LEDs being on, in seconds
-};
-
-#define PERIOD 604800
-#define SCHEDULE_COUNT 33
-LEDDuration schedule[SCHEDULE_COUNT] = {LEDDuration{1552312800,3600},LEDDuration{1552319400,420},LEDDuration{1552322760,720},LEDDuration{1552326720,420},LEDDuration{1552330380,2220},LEDDuration{1552335540,420},LEDDuration{1552338900,420},LEDDuration{1552342260,3600},LEDDuration{1552399200,3600},LEDDuration{1552405800,420},LEDDuration{1552409160,720},LEDDuration{1552413120,420},LEDDuration{1552416780,2220},LEDDuration{1552421940,420},LEDDuration{1552425300,420},LEDDuration{1552428660,3600},LEDDuration{1552485600,7200},LEDDuration{1552498320,1020},LEDDuration{1552504800,1920},LEDDuration{1552512480,5520},LEDDuration{1552572000,3600},LEDDuration{1552581120,1020},LEDDuration{1552587600,2100},LEDDuration{1552595460,540},LEDDuration{1552601460,2940},LEDDuration{1552658400,3600},LEDDuration{1552665000,420},LEDDuration{1552668360,720},LEDDuration{1552672320,420},LEDDuration{1552675980,2220},LEDDuration{1552681140,420},LEDDuration{1552684500,420},LEDDuration{1552687860,3600}};
 
 //HSV Constants
 int MAX_HUE = 255;
