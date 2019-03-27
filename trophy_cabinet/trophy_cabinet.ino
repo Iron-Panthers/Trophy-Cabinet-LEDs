@@ -41,12 +41,12 @@ void setup() {
     Serial.println("RTC successfully detected.");
   }
 
-  Serial.println("Waiting 3 seconds for signal before entering into test mode...");
+  Serial.println("Waiting 3 seconds before entering into normal mode...");
   Serial.setTimeout(3000);
   char buf[1];
   if (Serial.readBytes(buf, 1)) {
     Serial.println("Received input. Entering test mode.");
-    testMode();
+    testPatterns();
   }
   Serial.setTimeout(1000);
  
@@ -94,7 +94,7 @@ void loop() {
   Serial.print("Current time: ");
   Serial.println(currentTime);
   
-  Serial.print("Next time: ");
+  Serial.print("Next time:    ");
   Serial.println(scheduleEntry->start);
 
   Serial.print("Delay for: ");
@@ -103,12 +103,13 @@ void loop() {
 
   // Heartbeat blink every 10 seconds.
   unsigned long beginTime = millis();  // A measure taken to prevent overflow. 
-  while (millis() - beginTime <= waitDuration) {  // The subtraction underflow will cancel it out.
+  while (waitDuration - (millis() - beginTime) >= 10000) {  // The subtraction underflow will cancel it out.
     delay(9999);
     digitalWrite(13, HIGH);
     delay(1);
     digitalWrite(13, LOW);
   }
+  delay(waitDuration - (millis() - beginTime));
 
   unsigned long endTime = scheduleEntry->start + scheduleEntry->duration;
   Serial.print("The wait is over. LEDs on until: ");
@@ -121,7 +122,6 @@ void loop() {
     scheduleEntry->pattern->loop(leds);
   }
   scheduleEntry->pattern->end(leds);
-
   FastLED.clear();
   FastLED.show();
 
@@ -133,17 +133,28 @@ void loop() {
   scheduleIndex = (scheduleIndex + 1) % SCHEDULE_COUNT;
 }
 
-void testMode() {
+void testPatterns() {
   int i = 0;
   while (true) {
-    Serial.print("Testing #");
+    Serial.print("Displaying #");
     Serial.println(i);
     LEDPattern* pat = PATTERNS[i];
+    
     pat->begin(leds);
-    while (!Serial.available()) {
+    
+    while (!Serial.available()) {  // Wait for any serial input
       pat->loop(leds);
     }
     pat->end(leds);
+    FastLED.clear();
+    FastLED.show();
+    
+    while (Serial.available()) {  // Clear buffer
+      Serial.read();
+    }
+    
+    Serial.println("Ended");
     i = (i + 1) % PATTERN_COUNT;
+    delay(2000);
   }
 }

@@ -28,10 +28,6 @@ void LinearHue::end(CRGB* leds) {
 
 BouncingWave::BouncingWave(unsigned int delay, uint8_t step, int k) : del(delay), step(step), k(k) { }
 
-void BouncingWave::begin(CRGB* leds) {
-  wavePos = 0;
-}
-
 uint8_t BouncingWave::getBrightness(int error) {
   long brightness = ((long)error) * k;
   brightness *= -brightness;
@@ -39,6 +35,10 @@ uint8_t BouncingWave::getBrightness(int error) {
   brightness /= BOUNCING_WAVE_RESOLUTION;
   brightness += 255;
   return max(brightness, 0);
+}
+
+void BouncingWave::begin(CRGB* leds) {
+  wavePos = 0;
 }
 
 void BouncingWave::loop(CRGB* leds) {
@@ -51,7 +51,7 @@ void BouncingWave::loop(CRGB* leds) {
   
   for (int i = LOWER_COUNT; i < NUM_LEDS; i++) {
     int virtPos = map(i, NUM_LEDS, LOWER_COUNT, 0, BOUNCING_WAVE_RESOLUTION);
-    int hue = map(i, LOWER_COUNT, NUM_LEDS, 0, 255);
+    int hue = map(i, NUM_LEDS, LOWER_COUNT, 0, 255);
     leds[i] = CHSV(hue, 255, getBrightness(truePos - virtPos));
   }
   

@@ -26,7 +26,7 @@ period = timedelta(weeks=1)
 
 patterns = {
 	'basic': 'new LinearHue(20, 5)',
-	'bouncing': 'new BouncingWave(20, 5, 100)',
+	'bouncing': 'new BouncingWave(20, 5, 68)',
 }
 
 monday = [
@@ -40,7 +40,7 @@ monday = [
 	Duration(
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=8, minute=50), 
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=8, minute=57), 
-		'basic' 
+		'bouncing' 
 	),
 	# Break
 	Duration(
@@ -52,25 +52,25 @@ monday = [
 	Duration(
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=10, minute=52), 
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=10, minute=59), 
-		'basic'
+		'bouncing'
 	),
 	# Lunch
 	Duration(
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=11, minute=53), 
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=12, minute=30), 
-		'basic'
+		'bouncing'
 	),
 	# 5-6
 	Duration(
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=13, minute=19), 
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=13, minute=26), 
-		'basic'
+		'bouncing'
 	),
 	# 6-7
 	Duration(
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=14, minute=15), 
 		datetime(year=2019, month=3, day=11, tzinfo=pdt, hour=14, minute=22), 
-		'basic'
+		'bouncing'
 	),
 	# After school
 	Duration(
@@ -112,7 +112,7 @@ thursday_block = [
 	Duration(
 		datetime(year=2019, month=3, day=14, tzinfo=pdt, hour=7, minute=00), 
 		datetime(year=2019, month=3, day=14, tzinfo=pdt, hour=8, minute=00), 
-		'basic'
+		'bouncing'
 	),
 	# Break
 	Duration(
@@ -130,7 +130,7 @@ thursday_block = [
 	Duration(
 		datetime(year=2019, month=3, day=14, tzinfo=pdt, hour=13, minute=31), 
 		datetime(year=2019, month=3, day=14, tzinfo=pdt, hour=13, minute=40), 
-		'basic'
+		'bouncing'
 	),
 	# After school
 	Duration(
@@ -171,11 +171,14 @@ for k in [timedelta(0), timedelta(days=1), timedelta(days=4)]:
 	]
 
 durations += wednesday_block + thursday_block
+#durations = repeated_tests
+#period = timedelta(minutes=1)
+
 
 durations.sort(key=lambda x: x.start)
 
 array = ',\n  '.join(f'LEDDuration{{{int(d.start.timestamp())}, {int(d.end.timestamp() - d.start.timestamp())}, PTRN_{d.pattern}}}' for d in durations)
-array = 'LEDDuration schedule[SCHEDULE_COUNT] = {\n  ' + array + '\n};'
+array = 'const LEDDuration schedule[SCHEDULE_COUNT] = {\n  ' + array + '\n};'
 count = len(durations)
 
 total_duration = sum(d.end.timestamp() - d.start.timestamp() for d in durations)

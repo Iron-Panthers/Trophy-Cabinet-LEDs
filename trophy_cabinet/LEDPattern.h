@@ -24,9 +24,9 @@ class LEDPattern {
  * A hue cycle, with the lower one going right and the upper one going left.
  */
 class LinearHue : public LEDPattern {
-  uint8_t inc;
+  const uint8_t inc;
+  const uint16_t del;
   uint8_t hue;
-  uint16_t del;
   public:
     LinearHue(uint16_t delay, uint8_t inc);
     void begin(CRGB* leds);
@@ -38,11 +38,10 @@ class LinearHue : public LEDPattern {
  * A single wave bouncing left and right.
  */
 class BouncingWave : public LEDPattern {
-  unsigned int k;
-  uint8_t step;
-  unsigned int del;
-  int wavePos;
-  bool increasing;
+  const unsigned int k;
+  const uint8_t step;
+  const unsigned int del;
+  int wavePos;  // Negative if moving left, positive if moving right
 
   uint8_t getBrightness(int error);
   public:
