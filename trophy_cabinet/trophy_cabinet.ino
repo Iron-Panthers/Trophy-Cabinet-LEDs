@@ -25,15 +25,30 @@ void setup() {
 
   pinMode(13, OUTPUT);
 
+  FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.clear();
+  FastLED.show();
+
   if (!rtc.begin()) {
     Serial.println("RTC not detected! Entering failure mode.");
     while (true) {
       digitalWrite(13, HIGH);
-      delay(100);
+      delay(1);
       digitalWrite(13, LOW);
-      delay(900);
+      delay(999);
     }
+  } else {
+    Serial.println("RTC successfully detected.");
   }
+
+  Serial.println("Waiting 3 seconds for signal before entering into test mode...");
+  Serial.setTimeout(3000);
+  char buf[1];
+  if (Serial.readBytes(buf, 1)) {
+    Serial.println("Received input. Entering test mode.");
+    testMode();
+  }
+  Serial.setTimeout(1000);
  
   unsigned long currentTime = rtc.now().unixtime();
   Serial.print("Current time: ");
@@ -69,11 +84,6 @@ void setup() {
   Serial.print(" (which begins at ");
   Serial.print(schedule[scheduleIndex].start);
   Serial.println(")");
-  
-  FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
-
-  FastLED.clear();
-  FastLED.show();
 }
 
 void loop() {
@@ -121,4 +131,19 @@ void loop() {
   Serial.print("LED cycle finished. Next time for this entry is ");
   Serial.println(scheduleEntry->start);
   scheduleIndex = (scheduleIndex + 1) % SCHEDULE_COUNT;
+}
+
+void testMode() {
+  int i = 0;
+  while (true) {
+    Serial.print("Testing #");
+    Serial.println(i);
+    LEDPattern* pat = PATTERNS[i];
+    pat->begin(leds);
+    while (!Serial.available()) {
+      pat->loop(leds);
+    }
+    pat->end(leds);
+    i = (i + 1) % PATTERN_COUNT;
+  }
 }
